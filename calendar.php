@@ -1,7 +1,8 @@
 <?php
 /**
- * @param array $clubs club definitions (club_ID => name)
+ * @param string[] $clubs club definitions (club_ID => name)
  * @param EventCategory[] $eventCategories event categories
+ * @param string $club_title title for club picker
  *
  * @type EventCategory {
  * 		@type int event_category_ID category ID
@@ -31,27 +32,32 @@ foreach ($eventCategories as $category)
 </script>
 
 <div id="cm-events-calendar-wrapper">
-	<div class="row">
-		<?php if (isset($clubs)): ?>
-		<div class="col-md-6">
-			<div class="form-group">
-				<label class="control-label" for="cm-events-club-selector"><?= htmlspecialchars($club_title) ?></label>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">Filter</h4>
+		</div>
+		<div class="panel-body">
+			<?php if (isset($clubs) && count($clubs) > 1): ?>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="control-label" for="cm-events-club-selector"><?= htmlspecialchars($club_title) ?></label>
+					<br/>
+					<select id="cm-events-club-selector" multiple class="form-control">
+						<?php foreach ($clubs as $club_ID => $name): ?>
+							<option value="<?= $club_ID ?>"><?= htmlspecialchars($name) ?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+			<?php else: ?>
+			<div class="col-md-12">
+			<?php endif; ?>
+				<label for="cm-events-category-selector" class="control-label">Categories</label>
 				<br/>
-				<select id="cm-events-club-selector" multiple class="form-control">
-					<?php foreach ($clubs as $club_ID => $name): ?>
-						<option value="<?= $club_ID ?>"><?= htmlspecialchars($name) ?></option>
-					<?php endforeach; ?>
+				<select id="cm-events-category-selector" class="form-control" multiple>
 				</select>
 			</div>
-		</div>
-		<div class="col-md-6">
-		<?php else: ?>
-		<div class="col-md-12">
-		<?php endif; ?>
-			<label for="cm-events-category-selector" class="control-label">Categories</label>
-			<br/>
-			<select id="cm-events-category-selector" class="form-control" multiple>
-			</select>
 		</div>
 	</div>
 	<p>&nbsp;</p>

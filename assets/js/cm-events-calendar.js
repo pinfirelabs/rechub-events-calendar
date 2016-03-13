@@ -1,114 +1,179 @@
 (function($)
  {
-	 if (typeof(clubmanager_timezone) == 'undefined')
-	 {
-		 clubmanger_timezone = 'local';
-	 }
+	if (typeof(clubmanager_timezone) == 'undefined')
+	{
+		clubmanger_timezone = 'local';
+	}
 
-	 var arraysEqual = function(a1, a2)
-	 {
-		 return a1 === a2 || 
-			 (
-				 a1 !== null && a2 !== null &&
-				 a1.length === a2.length &&
-				 a1
-					 .map(function (val, idx) { return val === a2[idx]; })
-					 .reduce(function (prev, cur) { return prev && cur; }, true)
-			 );
-	 }
+	var arraysEqual = function(a1, a2)
+	{
+		return a1 === a2 || 
+			(
+				a1 !== null && a2 !== null &&
+				a1.length === a2.length &&
+				a1
+					.map(function (val, idx) { return val === a2[idx]; })
+					.reduce(function (prev, cur) { return prev && cur; }, true)
+			);
+	}
 
-	 var updateEvents = function(start, end, timezone, callback)
-	 {
-		 $.ajax({
-			 url: clubmanager_feed_url,
-			 dataType: 'json',
-			 data: {
-				 start: start.toISOString(),
-				 end: end.toISOString(),
-				 'category[]': $('#cm-events-category-selector').val(),
-				 'club_ID[]': $('#cm-events-club-selector').val()
-			 },
-			 success: function(data) {
-				 callback(data);
-			 }
-		 });
-	 };
+	var isBasic = false;
+	var buttons = 'month,agendaWeek,agendaDay';
+	if (window.innerWidth < 720 || (typeof(clubmanager_force_basic_views) != 'undefined' && clubmanager_force_basic_views))
+	{
+		buttons = 'month,basicWeek,basicDay';
+		isBasic = true;
+	}
 
-	 $('#cm-events-calendar').fullCalendar({
-		 events: updateEvents,
-		 timezone: clubmanager_timezone,
-		 header: {
-			 left: 'prev,next today',
-			 center: 'title',
-			 right: 'month,agendaWeek,agendaDay'
-		 },
-		 defaultView: 'month',
-		 height: "auto"
-	 });
+	// Returns a function, that, as long as it continues to be invoked, will not
+	// be triggered. The function will be called after it stops being called for
+	// N milliseconds. If `immediate` is passed, trigger the function on the
+	// leading edge, instead of the trailing.
+	function debounce(func, wait, immediate) {
+		var timeout;
+		return function() {
+			var context = this, args = arguments;
+			var later = function() {
+				timeout = null;
+				if (!immediate) func.apply(context, args);
+			};
+			var callNow = immediate && !timeout;
+			clearTimeout(timeout);
+			timeout = setTimeout(later, wait);
+			if (callNow) func.apply(context, args);
+		};
+	};
 
-	 $('#cm-events-calendar-wrapper select').select2({
-		 minimumResultsForSearch: 0,
-		 closeOnSelect: false,
-		 placeholder: 'All',
-		 allowClear: true
-	 });
+	if (typeof(clubmanager_force_basic_views) == 'undefined' || !clubmanager_force_basic_views)
+	{
+		$(window).on('resize', debounce(function()
+		{
+			var newIsBasic = (window.innerWidth < 720);
 
-	 var updateCategories = function(e)
-	 {
-		 var categories = [];
-		 var selectedClubs = $('#cm-events-club-selector').val();
-		 if (!Array.isArray(selectedClubs) || selectedClubs.length == 0)
-		 {
-			 selectedClubs = Object.keys(clubmanager_event_categories);
-		 }
-		 
-		 for (i = 0; i < selectedClubs.length; i++)
-		 {
-			 var club_ID = selectedClubs[i];
-			 var clubCategories = clubmanager_event_categories[club_ID];
-			 if (Array.isArray(clubCategories) && clubCategories.length > 0)
-			 {
-				 categories.push({
-					 text: clubmanager_clubs[club_ID],
-					 children: clubmanager_event_categories[club_ID]
-				 });
-			 }
-		 }
+			if (newIsBasic != isBasic)
+			{
+				var buttons = newIsBasic ? 'month,basicWeek,basicDay' : 'month,agendaWeek,agendaDay';
+				var currentView = calendar.fullCalendar('getView').name;
+				calendar.fullCalendar('destroy');
 
-		 $('#cm-events-category-selector').find('option, optgroup').remove();
-		 $('#cm-events-category-selector').select2({
-			 data: categories,
-			 placeholder: 'All'
-		 });
+				if (newIsBasic)
+				{
+					currentView = currentView.replace('agenda', 'basic');
+				}
+				else
+				{
+					currentView = currentView.replace('basic', 'agenda');
+				}
 
-		 if (e && e.target.id == 'cm-events-club-selector')
-		 {
-			 $('#cm-events-calendar').fullCalendar('refetchEvents');
-		 }
-	 };
+				calendar.fullCalendar({
+					events: updateEvents,
+					timezone: clubmanager_timezone,
+					header: {
+						left: 'prev,next today',
+						center: 'title',
+						right: buttons 
+					},
+					defaultView: currentView,
+					height: "auto"
+				});
 
-	 updateCategories();
+				isBasic = newIsBasic;
+			}
+		}, 500));
+	}
 
-	 var oldSelectedClubs = $('#cm-events-club-selector').val();
-	 $('#cm-events-club-selector').on('select2:close', function(e)
-	 {
-		 var selectedClubs = $('#cm-events-club-selector').val();
-		 if (!arraysEqual(oldSelectedClubs, selectedClubs))
-		 {
-			 oldSelectedClubs = selectedClubs;
+	var updateEvents = function(start, end, timezone, callback)
+	{
+		var duration = end.unix() - start.unix();
 
-			 updateCategories(e);
-		 }
-	 });
+		$.ajax({
+			url: clubmanager_feed_url,
+			dataType: 'json',
+			data: {
+				start: start.toISOString(),
+				end: end.toISOString(),
+				'category[]': $('#cm-events-category-selector').val(),
+				'club_ID[]': $('#cm-events-club-selector').val()
+			},
+			success: callback
+		});
+	};
 
-	 var oldSelectedCategories = [];
-	 $('#cm-events-category-selector').on('select2:close', function()
-	 {
-		 var selectedCategories = $('#cm-events-category-selector').val();
-		 if (!arraysEqual(oldSelectedCategories, selectedCategories))
-		 {
-			 oldSelectedCategories = selectedCategories;
-			 $('#cm-events-calendar').fullCalendar('refetchEvents');
-		 }
-	 });
-})(jQuery);
+	var calendar = $('#cm-events-calendar').fullCalendar({
+		events: updateEvents,
+		timezone: clubmanager_timezone,
+		header: {
+			left: 'prev,next today',
+			center: 'title',
+			right: buttons 
+		},
+		defaultView: 'month',
+		height: "auto"
+	});
+
+	$('#cm-events-calendar-wrapper select').select2({
+		minimumResultsForSearch: 0,
+		closeOnSelect: false,
+		placeholder: 'All',
+		allowClear: true
+	});
+
+	var updateCategories = function(e)
+	{
+		var categories = [];
+		var selectedClubs = $('#cm-events-club-selector').val();
+		if (!Array.isArray(selectedClubs) || selectedClubs.length == 0)
+		{
+			selectedClubs = Object.keys(clubmanager_event_categories);
+		}
+
+		for (i = 0; i < selectedClubs.length; i++)
+		{
+			var club_ID = selectedClubs[i];
+			var clubCategories = clubmanager_event_categories[club_ID];
+			if (Array.isArray(clubCategories) && clubCategories.length > 0)
+			{
+				categories.push({
+					text: clubmanager_clubs[club_ID],
+					children: clubmanager_event_categories[club_ID]
+				});
+			}
+		}
+
+		$('#cm-events-category-selector').find('option, optgroup').remove();
+		$('#cm-events-category-selector').select2({
+			data: categories,
+			placeholder: 'All'
+		});
+
+		if (e && e.target.id == 'cm-events-club-selector')
+		{
+			$('#cm-events-calendar').fullCalendar('refetchEvents');
+		}
+	};
+
+	updateCategories();
+
+	var oldSelectedClubs = $('#cm-events-club-selector').val();
+	$('#cm-events-club-selector').on('select2:close', function(e)
+	{
+		var selectedClubs = $('#cm-events-club-selector').val();
+		if (!arraysEqual(oldSelectedClubs, selectedClubs))
+		{
+			oldSelectedClubs = selectedClubs;
+
+			updateCategories(e);
+		}
+	});
+
+	var oldSelectedCategories = [];
+	$('#cm-events-category-selector').on('select2:close', function()
+	{
+		var selectedCategories = $('#cm-events-category-selector').val();
+		if (!arraysEqual(oldSelectedCategories, selectedCategories))
+		{
+			oldSelectedCategories = selectedCategories;
+			$('#cm-events-calendar').fullCalendar('refetchEvents');
+		}
+	});
+ })(jQuery);

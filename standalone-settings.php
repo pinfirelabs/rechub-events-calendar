@@ -1,2 +1,2 @@
 <?php
-$cmApiServer = 'http://clubmanager.devvm.pinfirelabs.com';
+$cmServer = 'http://clubmanager.devvm.pinfirelabs.com';
