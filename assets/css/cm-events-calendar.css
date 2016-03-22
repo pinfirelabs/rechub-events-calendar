@@ -2,3 +2,7 @@
 	width: 100%;
 	min-height: 100%;
 }
+
+#cm-events-calendar-wrapper span.select2 {
+	width: 100% !important;
+}
