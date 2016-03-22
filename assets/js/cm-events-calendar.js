@@ -99,6 +99,55 @@
 		});
 	};
 
+	/**
+	 * @param Object state {
+	 * 		@type int[] clubs
+	 * 		@type int[] categories
+	 * }
+	 */
+	var refreshEventsFromState = function(state) {
+		if (state.clubs != undefined)
+		{
+			$('#cm-events-club-selector')
+				.val(state.clubs)
+				.trigger('change');
+		}
+
+		if (state.categories != undefined)
+		{
+			$('#cm-events-category-selector')
+				.val(state.categories)
+				.trigger('change');
+		}
+			
+		$('#cm-events-calendar').fullCalendar('refetchEvents');
+	};
+
+	window.onpopstate = function(e)
+	{
+		refreshEventsFromState(e.state);
+	};
+
+	var saveState = function() {
+		var stateObj = {
+			'clubs': $('#cm-events-club-selector').val(),
+			'categories': $('#cm-events-category-selector').val()
+		};
+
+		window.history.pushState(stateObj, '', '?calendar-state=' + window.btoa(JSON.stringify(stateObj)));
+	}
+
+	// Parse current query params
+	var getParameterByName = function (name) {
+		url = window.location.href;
+		name = name.replace(/[\[\]]/g, "\\$&").toLowerCase();// This is just to avoid case sensitiveness for query parameter name
+		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			results = regex.exec(url);
+		if (!results) return null;
+		if (!results[2]) return '';
+		return decodeURIComponent(results[2].replace(/\+/g, " "));
+	};
+	
 	var calendar = $('#cm-events-calendar').fullCalendar({
 		events: updateEvents,
 		timezone: clubmanager_timezone,
@@ -154,6 +203,24 @@
 
 	updateCategories();
 
+	// This needs to be after we've loaded the categories we need
+	var currentState = getParameterByName('calendar-state');
+	if (currentState != undefined && currentState != '')
+	{
+		try
+		{
+			currentState = JSON.parse(window.atob(currentState));
+			if (currentState)
+			{
+				refreshEventsFromState(currentState);
+			}
+		}
+		catch (e) 
+		{
+			console.error("Invalid state: " + e);
+		}
+	}
+
 	var oldSelectedClubs = $('#cm-events-club-selector').val();
 	$('#cm-events-club-selector').on('select2:close', function(e)
 	{
@@ -161,8 +228,9 @@
 		if (!arraysEqual(oldSelectedClubs, selectedClubs))
 		{
 			oldSelectedClubs = selectedClubs;
-
 			updateCategories(e);
+
+			saveState();
 		}
 	});
 
@@ -173,7 +241,9 @@
 		if (!arraysEqual(oldSelectedCategories, selectedCategories))
 		{
 			oldSelectedCategories = selectedCategories;
+			saveState();
+			
 			$('#cm-events-calendar').fullCalendar('refetchEvents');
 		}
 	});
- })(jQuery);
+})(jQuery);
