@@ -50,7 +50,7 @@ foreach ($events as $event)
 		$calendarEvent = new stdClass; 
 		
 		$calendarEvent->id = $event->event_ID . '_' . $i;
-		$calendarEvent->title = htmlspecialchars($event->name);
+		$calendarEvent->title = $event->name;
 
 		$calendarEvent->allDay = false;
 		$calendarEvent->start = $schedule->start;
