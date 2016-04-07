@@ -74,7 +74,8 @@
 						right: buttons 
 					},
 					defaultView: currentView,
-					height: "auto"
+					height: "auto",
+					fixedWeekCount: false
 				});
 
 				isBasic = newIsBasic;
@@ -157,7 +158,8 @@
 			right: buttons 
 		},
 		defaultView: 'month',
-		height: "auto"
+		height: "auto",
+		fixedWeekCount: false
 	});
 
 	$('#cm-events-calendar-wrapper select').select2({
