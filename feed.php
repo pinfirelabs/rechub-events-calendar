@@ -42,7 +42,10 @@ foreach ($events as $event)
 	$i = 0;
 	foreach ($event->schedule as $schedule)
 	{
-		if (strtotime($schedule->start) < strtotime($_REQUEST['start']))
+		if (
+			strtotime($schedule->end) < strtotime($_REQUEST['start']) || 
+			strtotime($schedule->start) > strtotime($_REQUEST['end'])
+		)
 		{
 			continue;
 		}
