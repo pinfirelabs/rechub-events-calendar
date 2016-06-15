@@ -1,7 +1,7 @@
 {
 	"name": "threelakessoftware/shared-events-calendar",
 	"require": {
-		"bower-asset/fullcalendar": "^2.6",
+		"bower-asset/fullcalendar": "^2.7",
 		"guzzlehttp/guzzle": "^6.1",
 		"bower-asset/select2": "^4.0"
 	}
