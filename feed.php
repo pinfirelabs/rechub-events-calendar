@@ -59,7 +59,8 @@ foreach ($events as $event)
 		$calendarEvent->start = $schedule->start;
 		$calendarEvent->end = $schedule->end;
 		$calendarEvent->url = $cmServer . '/event/' . $event->event_ID; 
-		$calendarEvent->color = isset($event->subcategory->category->color) ? $event->subcategory->category->color : '#543232';
+		$color = isset($event->category) ? $event->category->effectiveColor : null;
+		$calendarEvent->color = isset($color) ? $color : '#543232';
 
 		$calendarEvents[] = $calendarEvent;
 		$i++;
