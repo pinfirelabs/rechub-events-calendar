@@ -44,6 +44,26 @@
 		};
 	};
 
+	function renderFunc(event, element) {
+		if (typeof(clubmanager_disable_status_overlay) == 'undefined' || !clubmanager_disable_status_overlay)
+		{
+			element.addClass('status-' + event.signupStatus);
+		}
+
+		switch (event.signupStatus)
+		{
+			case "started":
+				element.prop('title', "Event has started");
+				break;
+			case "cancelled":
+				element.prop('title', "Event has been cancelled");
+				break;
+			case "full":
+				element.prop('title', "Event is full.");
+				break;
+		}
+	}
+
 	if (typeof(clubmanager_force_basic_views) == 'undefined' || !clubmanager_force_basic_views)
 	{
 		$(window).on('resize', debounce(function()
@@ -75,7 +95,8 @@
 					},
 					defaultView: currentView,
 					height: "auto",
-					fixedWeekCount: false
+					fixedWeekCount: false,
+					eventRender: renderFunc
 				});
 
 				isBasic = newIsBasic;
@@ -159,7 +180,8 @@
 		},
 		defaultView: 'month',
 		height: "auto",
-		fixedWeekCount: false
+		fixedWeekCount: false,
+		eventRender: renderFunc
 	});
 
 	$('#cm-events-calendar-wrapper select').select2({

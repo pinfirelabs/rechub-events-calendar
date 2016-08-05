@@ -6,3 +6,13 @@
 #cm-events-calendar-wrapper span.select2 {
 	width: 100% !important;
 }
+
+.status-cancelled {
+	background-image: repeating-linear-gradient(45deg, transparent, rgba(255,255,255,.3) 5px),
+		repeating-linear-gradient(-45deg, transparent, rgba(255,255,255,.3) 5px);
+}
+.status-full {
+	background-image: radial-gradient(circle at 0% 50%, transparent 5px, rgba(255,255,255,.5) 6px, transparent 7px),
+		radial-gradient(circle at 50% 0%, transparent 5px, rgba(255,255,255,.5) 6px, transparent 7px);
+	background-size: 10px 10px;
+}

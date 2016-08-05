@@ -62,6 +62,8 @@ foreach ($events as $event)
 		$color = isset($event->category) ? $event->category->effectiveColor : null;
 		$calendarEvent->color = isset($color) ? $color : '#543232';
 
+		$calendarEvent->signupStatus = $event->signupStatus;
+
 		$calendarEvents[] = $calendarEvent;
 		$i++;
 	}
