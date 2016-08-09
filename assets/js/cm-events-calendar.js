@@ -47,7 +47,14 @@
 	function renderFunc(event, element) {
 		if (typeof(clubmanager_disable_status_overlay) == 'undefined' || !clubmanager_disable_status_overlay)
 		{
-			element.addClass('status-' + event.signupStatus);
+			icon = $('<span class="status-icon"></span>');
+			icon.addClass('status-' + event.signupStatus);
+			icon.css('background-color', element.css('background-color'));
+
+			element
+				.find('.fc-content')
+				.addClass('has-icon')
+				.append(icon);
 		}
 
 		switch (event.signupStatus)

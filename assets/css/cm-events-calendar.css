@@ -7,12 +7,40 @@
 	width: 100% !important;
 }
 
-.status-cancelled {
-	background-image: repeating-linear-gradient(45deg, transparent, rgba(255,255,255,.3) 5px),
-		repeating-linear-gradient(-45deg, transparent, rgba(255,255,255,.3) 5px);
+.status-icon {
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  position: absolute;
+  right: 0;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 3px;
+  z-index: 100000;
 }
-.status-full {
-	background-image: radial-gradient(circle at 0% 50%, transparent 5px, rgba(255,255,255,.5) 6px, transparent 7px),
-		radial-gradient(circle at 50% 0%, transparent 5px, rgba(255,255,255,.5) 6px, transparent 7px);
-	background-size: 10px 10px;
+
+.status-cancelled:before {
+	content: "\e014"; /* glyphixon-remove */
+	color: #b81e3f;
+}
+
+.status-full:before {
+	content: "\e090"; /* glyphicon-ban-circle */
+	color: #8f8c8c;
+}
+
+.status-started:before {
+	content: "\e109"; /* glyphicon-calendar */
+	color: #8f8c8c;
+}
+
+.status-open:before {
+	content: "\e013"; /* glyphicon-ok */
+	color: #22962c;
 }
