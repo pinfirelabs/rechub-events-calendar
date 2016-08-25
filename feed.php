@@ -11,9 +11,19 @@ if (empty($cmServer)) {
 	throw new \Exception('$cmServer is required for this script.');
 }
 
-foreach (['start', 'end'] as $required) {
-	if (empty($_REQUEST[$required])) {
-		throw new \Exception("\${$required} is a required parameter.");
+foreach (['start', 'end'] as $required)
+{
+	if (empty($_REQUEST[$required])) 
+	{
+		$message = "\${$required} is a required parameter.";
+		if (class_exists('\DontCareHttpException'))
+		{
+			throw new \DontCareHttpException(400, $message);
+		}
+		else
+		{
+			throw new \Exception($message);
+		}
 	}
 }
 
