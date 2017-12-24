@@ -135,6 +135,11 @@
 	 * }
 	 */
 	var refreshEventsFromState = function(state) {
+		if (typeof(state) != 'object')
+		{
+			return;
+		}
+
 		if (state.clubs != undefined)
 		{
 			$('#cm-events-club-selector')
