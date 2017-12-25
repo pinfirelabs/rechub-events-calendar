@@ -135,19 +135,19 @@
 	 * }
 	 */
 	var refreshEventsFromState = function(state) {
-		if (typeof(state) != 'object')
+		if (!(state instanceof Object))
 		{
 			return;
 		}
 
-		if (state.clubs != undefined)
+		if (state.hasOwnProperty("clubs"))
 		{
 			$('#cm-events-club-selector')
 				.val(state.clubs)
 				.trigger('change');
 		}
 
-		if (state.categories != undefined)
+		if (state.hasOwnProperty("categories"))
 		{
 			$('#cm-events-category-selector')
 				.val(state.categories)
