@@ -135,7 +135,7 @@
 	 * }
 	 */
 	var refreshEventsFromState = function(state) {
-		if (!(state instanceof Object))
+		if (!(state instanceof Object) || state == null)
 		{
 			return;
 		}
