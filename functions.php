@@ -1,5 +1,6 @@
 <?php
-require_once('vendor/autoload.php');
+if (file_exists('vendor/autoload.php'))
+	require_once('vendor/autoload.php');
 
 /**
  * Sends a log to the error log or to the globally configured @see $apiLogFunction

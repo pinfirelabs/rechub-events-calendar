@@ -3,7 +3,7 @@
 	min-height: 100%;
 }
 
-#cm-events-calendar-wrapper span.select2 {
+.cm-events-category-selector span.select2 {
 	width: 100% !important;
 }
 

@@ -30,30 +30,8 @@
 			<div class="page-header">
 				<h1>Calendar test</h1>
 			</div>
-			<?php
-				require_once('standalone-settings.php');
-				require_once('functions.php');
-
-				$generalInfo = makeServiceCall('GET', '/api/general');
-				$eventCategories = makeServiceCall('GET', '/api/eventCategory');
-				
-				$clubs = [];
-				foreach ($generalInfo->clubs as $club)
-				{
-					$clubs[$club->club_ID] = $club->name;
-				}
-
-				$club_title = ucwords($generalInfo->strings->clubs);
-			?>
-			<script type="text/javascript">
-				var clubmanager_feed_url = '/standalone-feed.php';
-				var clubmanager_timezone = "<?= $generalInfo->timezone ?>";
-				var clubmanager_clubs = <?= json_encode($clubs) ?>;
-			</script>
-			
-			<?php
-				require_once('calendar.php');
-			?>
+			<?php require_once('parts/con-scripts.php'); ?>
+			<?php require_once('calendar.php'); ?>
 		</div>
 		
 		<script type="text/javascript" src="assets/js/cm-events-calendar.js"></script>

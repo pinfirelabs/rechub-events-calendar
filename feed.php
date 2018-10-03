@@ -32,7 +32,8 @@ $params = [
 	'end' => $_REQUEST['end'],
 	'club_ID' => isset($_REQUEST['club_ID']) ? $_REQUEST['club_ID'] : null,
 	'category' => isset($_REQUEST['category']) ? $_REQUEST['category'] : null,
-	'pageSize' => 0 
+	'pageSize' => 0,
+	'search' => $_REQUEST['search']
 ];
 
 if (is_callable($eventFetchFunction))
