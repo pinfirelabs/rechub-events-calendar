@@ -5,15 +5,7 @@
 			"threelakessoftware\\sharedEventsCalendar\\": "src/"
 		}
 	},
-	"require": {
-		"bower-asset/fullcalendar": "^2.7",
-		"guzzlehttp/guzzle": "^6.1",
-		"bower-asset/select2": "^4.0"
-	},
-	"repositories": [
-		{
-			"type": "composer",
-			"url": "https://asset-packagist.org"
-		}
-	]
+	"require-dev": {
+		"guzzlehttp/guzzle": "^6.1"
+	}
 }
