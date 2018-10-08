@@ -1,10 +1,8 @@
 <?php
     global $cmApiServer;
-    global $search;
+	global $search;
+	global $cmServer;
 
-    if (!empty($cmServer)) {
-        var_dump($cmServer); exit;
-    }
     if (empty($cmServer)) {
         require_once(__DIR__ . '/../standalone-settings.php');
     }
