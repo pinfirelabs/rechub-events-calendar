@@ -2,6 +2,8 @@
 if (file_exists('vendor/autoload.php'))
 	require_once('vendor/autoload.php');
 
+use \threelakessoftware\sharedEventsCalendar\CalendarMaker;
+
 /**
  * Sends a log to the error log or to the globally configured @see $apiLogFunction
  *
@@ -37,6 +39,15 @@ function makeServiceCall($method, $url, $args = [])
 	}
 
 	apilog($cmApiServer);
+
+	$cacheKey = md5(json_encode(func_get_args()));
+	$cache = CalendarMaker::getCache();
+
+	$ret = $cache->get($cacheKey);
+	if (!empty($ret))
+	{
+		return $ret;
+	}
 
 	$response = null;
 	$client = new \GuzzleHttp\Client([
@@ -84,6 +95,8 @@ function makeServiceCall($method, $url, $args = [])
 	{
 		throw new Exception("Error during service call (no decoded body): " . $bodytext);
 	}
+
+	$cache->set($cacheKey, $decodedbody, CalendarMaker::getCacheTtl());
 
 	return $decodedbody;
 }
