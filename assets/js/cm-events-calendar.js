@@ -4,6 +4,37 @@ let isWithinRange = (start, end) => {
     }
 }
 
+let fetchCategoriesByClub = function(apiBase, clubIds) {
+	return $.get(apiBase + '/api/eventCategory', { club_ID: clubIds, search: window.clubmanager_search })
+		.then(function(res) {
+			var byClub = {}
+			res.forEach(function(cat) {
+				byClub[cat.club_ID] = byClub[cat.club_ID] || [] 
+
+				byClub[cat.club_ID].push({
+					id: cat.event_category_ID,
+					text: cat.name
+				})
+			})
+
+			return byClub;
+		})
+}
+
+let fetchGeneral = function(apiBase) {
+	return $.get(apiBase + '/api/general')
+		.then(function(res) {
+			var clubs = {}
+			res.clubs.forEach(function(c) {
+				clubs[c.club_ID] = c.name;
+			})
+
+			return {
+				cmTimezone: res.timezone,
+				clubs: clubs,			}
+		})
+}
+
 let fetchEvents = function(apiBase, cmServer) {
     return function(start, end, clubId = null, category = null, search = '') {
         return $.get(apiBase + '/api/event',{
@@ -39,12 +70,12 @@ let fetchEvents = function(apiBase, cmServer) {
     }
 }
 
-window.cmCal = function() {
+window.cmCal = function(cmApiurl, cmUrl, clubByCat, general) {
 	(function($)
 	{
-		if (typeof(clubmanager_timezone) == 'undefined')
+		if (typeof(general.timezone) == 'undefined')
 		{
-			clubmanger_timezone = 'local';
+			general.timezone = 'local';
 		}
 
 		var arraysEqual = function(a1, a2)
@@ -136,7 +167,7 @@ window.cmCal = function() {
 
 					calendar.fullCalendar({
 						events: updateEvents,
-						timezone: window.clubmanager_timezone || 'local',
+						timezone: general.timezone || 'local',
 						header: {
 							left: 'prev,next today',
 							center: 'title',
@@ -157,7 +188,7 @@ window.cmCal = function() {
 		{
 			var duration = end.unix() - start.unix();
 
-			fetchEvents(window.clubmanager_api_url, window.clubmanager_url)(
+			fetchEvents(cmApiurl, cmUrl)(
 				start.toISOString(),
 				end.toISOString(),
 				$('#cm-events-club-selector').val(),
@@ -223,7 +254,7 @@ window.cmCal = function() {
 		
 		var calendar = $('#cm-events-calendar').fullCalendar({
 			events: updateEvents,
-			timezone: window.clubmanager_timezone || 'local',
+			timezone: general.timezone || 'local',
 			header: {
 				left: 'prev,next today',
 				center: 'title',
@@ -248,18 +279,18 @@ window.cmCal = function() {
 			var selectedClubs = $('#cm-events-club-selector').val();
 			if (!Array.isArray(selectedClubs) || selectedClubs.length == 0)
 			{
-				selectedClubs = Object.keys(clubmanager_event_categories);
+				selectedClubs = Object.keys(clubByCat);
 			}
 
 			for (i = 0; i < selectedClubs.length; i++)
 			{
 				var club_ID = selectedClubs[i];
-				var clubCategories = clubmanager_event_categories[club_ID];
+				var clubCategories = clubByCat[club_ID];
 				if (Array.isArray(clubCategories) && clubCategories.length > 0)
 				{
 					categories.push({
-						text: clubmanager_clubs[club_ID],
-						children: clubmanager_event_categories[club_ID]
+						text: general.clubs[club_ID],
+						children: clubByCat[club_ID]
 					});
 				}
 			}

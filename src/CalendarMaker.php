@@ -19,13 +19,13 @@ class CalendarMaker {
 
 		$search = $searchStr;
 
-		$this->_cache = $cache;
-		if (!isset($this->_cache))
+		static::$_cache = $cache;
+		if (!isset(static::$_cache))
 		{
-			$this->_cache = new VoidCachePool;
+			static::$_cache = new VoidCachePool;
 		}
 
-		$this->ttl = $cacheTtl;
+		static::$_ttl = $cacheTtl;
     }
 
     public $scripts = [
