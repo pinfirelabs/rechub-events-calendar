@@ -153,7 +153,7 @@
 				.val(state.categories)
 				.trigger('change');
 		}
-			
+
 		$('#cm-events-calendar').fullCalendar('refetchEvents');
 	};
 
@@ -181,14 +181,14 @@
 		if (!results[2]) return '';
 		return decodeURIComponent(results[2].replace(/\+/g, " "));
 	};
-	
+
 	var calendar = $('#cm-events-calendar').fullCalendar({
 		events: updateEvents,
 		timezone: clubmanager_timezone,
 		header: {
 			left: 'prev,next today',
 			center: 'title',
-			right: buttons 
+			right: buttons
 		},
 		defaultView: 'month',
 		height: "auto",
@@ -220,7 +220,7 @@
 			{
 				categories.push({
 					text: clubmanager_clubs[club_ID],
-					children: clubmanager_event_categories[club_ID]
+					children: clubCategories,
 				});
 			}
 		}
@@ -230,6 +230,32 @@
 			data: categories,
 			placeholder: 'All'
 		});
+
+		var legend = $('#category-legend');
+		legend.empty();
+
+		categories.forEach(function(club)
+		{
+			if (!Array.isArray(club.children) && club.children.length == 0)
+			{
+				return;
+			}
+
+			club.children.forEach(function(category)
+			{
+				var li = $('<li class="category-legend-item"></li>');
+				var colorSpan = $('<span class="category-legend-color"></span>');
+				colorSpan.css('background-color', category.color);
+				li.append(colorSpan);
+
+				var nameSpan = $('<span class="category-legend-name"></span>');
+				nameSpan.text(category.text);
+				li.append(nameSpan);
+
+				legend.append(li);
+			});
+		});
+
 
 		if (e && e.target.id == 'cm-events-club-selector')
 		{
@@ -251,7 +277,7 @@
 				refreshEventsFromState(currentState);
 			}
 		}
-		catch (e) 
+		catch (e)
 		{
 			console.error("Invalid state: " + e);
 		}
@@ -278,7 +304,7 @@
 		{
 			oldSelectedCategories = selectedCategories;
 			saveState();
-			
+
 			$('#cm-events-calendar').fullCalendar('refetchEvents');
 		}
 	});
