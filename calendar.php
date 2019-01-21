@@ -3,6 +3,7 @@
  * @param string[] $clubs club definitions (club_ID => name)
  * @param EventCategory[] $eventCategories event categories
  * @param string $club_title title for club picker
+ * @param bool $showLegend show calendar legend
  *
  * @type EventCategory {
  * 		@var int event_category_ID category ID
@@ -35,7 +36,7 @@ foreach ($eventCategories as $category)
 </script>
 
 <div id="cm-events-calendar-wrapper">
-	<?php if (($_REQUEST['hideFilter'] ?? 0 ) == 1): ?>
+	<?php if (empty($_REQUEST['hideFilter']) || !$_REQUEST['hideFilter']): ?>
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h4 class="panel-title">Filter</h4>
@@ -64,8 +65,8 @@ foreach ($eventCategories as $category)
 				</div>
 			</div>
 		</div>
-	<?php endif // (empty($_REQUEST['hideFilter'])): ?>
-	<?php if ((_REQUEST['hideLegend'] ?? 0) == 1): ?>
+	<?php endif // (empty($_REQUEST['hideFilter']) || !$_REQUEST['hideFilter']): ?>
+	<?php if (!empty($showLegend) && empty($_REQUEST['hideLegend'])): ?>
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">Legend</h3>
@@ -89,7 +90,7 @@ foreach ($eventCategories as $category)
 				</div>
 			</div>
 		</div>
-	<?php endif // (empty($_REQUEST['hideLegend'])): ?>
+	<?php endif // (empty($_REQUEST['hideLegend']) || !$_REQUEST['hideLegend']): ?>
 	<p>&nbsp;</p>
 	<div id="cm-events-calendar"></div>
 </div>
