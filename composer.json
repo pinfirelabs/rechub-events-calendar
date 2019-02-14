@@ -1,5 +1,10 @@
 {
 	"name": "threelakessoftware/shared-events-calendar",
+	"autoload": {
+        "psr-4": {
+          "threelakessoftware\\sharedEventsCalendar\\": "src/"
+        }
+    },
 	"require": {
 		"bower-asset/fullcalendar": "^2.7",
 		"guzzlehttp/guzzle": "^6.1",

@@ -44,3 +44,30 @@
 	content: "\e013"; /* glyphicon-ok */
 	color: #22962c;
 }
+
+li.category-legend-item {
+	float: left;
+	background: none;
+	list-style-type: none;
+	padding: 5px;
+}
+
+span.category-legend-color {
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	border-radius: 5px;
+	float: left;
+}
+
+span.category-legend-name {
+	margin-left: 5px;
+	line-height: 20px;
+	color: #888;
+}
+
+@media (max-width: 767px) {
+	#status-legend {
+		margin-left: 20px;
+	}
+}
