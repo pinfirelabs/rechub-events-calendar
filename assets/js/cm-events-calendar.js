@@ -42,7 +42,9 @@ let fetchEvents = function(apiBase, cmServer) {
             end: end,
             club_ID: clubId,
             category: category,
-            search: search
+            search: search,
+            pageSize: -1,
+            fields: 'event_ID,name,schedule,category,signupStatus'
         }).then(function(events) {
             let isWithinRangeChecker = isWithinRange(start, end)
 
